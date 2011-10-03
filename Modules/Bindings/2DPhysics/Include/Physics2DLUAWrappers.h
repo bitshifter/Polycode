@@ -14,6 +14,19 @@ extern "C" {
 
 namespace Polycode {
 
+static int Physics2D_PhysicsJoint(lua_State *L) {
+	PhysicsJoint *inst = new PhysicsJoint();
+	lua_pushlightuserdata(L, (void*)inst);
+	return 1;
+}
+
+static int Physics2D_delete_PhysicsJoint(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsJoint *inst = (PhysicsJoint*)lua_topointer(L, 1);
+	delete inst;
+	return 0;
+}
+
 static int Physics2D_PhysicsScreen(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TNUMBER);
 	Number worldScale = lua_tonumber(L, 1);
@@ -578,19 +591,6 @@ static int Physics2D_PhysicsScreenEvent_getSecondEntity(lua_State *L) {
 static int Physics2D_delete_PhysicsScreenEvent(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
 	PhysicsScreenEvent *inst = (PhysicsScreenEvent*)lua_topointer(L, 1);
-	delete inst;
-	return 0;
-}
-
-static int Physics2D_PhysicsJoint(lua_State *L) {
-	PhysicsJoint *inst = new PhysicsJoint();
-	lua_pushlightuserdata(L, (void*)inst);
-	return 1;
-}
-
-static int Physics2D_delete_PhysicsJoint(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsJoint *inst = (PhysicsJoint*)lua_topointer(L, 1);
 	delete inst;
 	return 0;
 }

@@ -8,11 +8,11 @@ extern "C" {
 #include "lauxlib.h"
 } // extern "C" 
 
-#include "Polycode3DPhysics.h"
 #include "PolyCollisionScene.h"
-#include "PolyCollisionSceneEntity.h"
 #include "PolyPhysicsScene.h"
+#include "PolyCollisionSceneEntity.h"
 #include "PolyPhysicsSceneEntity.h"
+#include "Polycode3DPhysics.h"
 
 namespace Polycode {
 
@@ -496,6 +496,93 @@ static int Physics3D_delete_PhysicsScene(lua_State *L) {
 	return 0;
 }
 
+static int Physics3D_PhysicsCharacter(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	SceneEntity * entity = (SceneEntity *)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TNUMBER);
+	Number mass = lua_tonumber(L, 2);
+	luaL_checktype(L, 3, LUA_TNUMBER);
+	Number friction = lua_tonumber(L, 3);
+	luaL_checktype(L, 4, LUA_TNUMBER);
+	Number stepSize = lua_tonumber(L, 4);
+	PhysicsCharacter *inst = new PhysicsCharacter(entity, mass, friction, stepSize);
+	lua_pushlightuserdata(L, (void*)inst);
+	return 1;
+}
+
+static int Physics3D_PhysicsCharacter_Update(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	inst->Update();
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_setWalkDirection(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TLIGHTUSERDATA);
+	Vector3 direction = *(Vector3*)lua_topointer(L, 2);
+	inst->setWalkDirection(direction);
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_jump(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	inst->jump();
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_warpCharacter(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TLIGHTUSERDATA);
+	Vector3 position = *(Vector3*)lua_topointer(L, 2);
+	inst->warpCharacter(position);
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_setJumpSpeed(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TNUMBER);
+	Number jumpSpeed = lua_tonumber(L, 2);
+	inst->setJumpSpeed(jumpSpeed);
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_setFallSpeed(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TNUMBER);
+	Number fallSpeed = lua_tonumber(L, 2);
+	inst->setFallSpeed(fallSpeed);
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_setMaxJumpHeight(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	luaL_checktype(L, 2, LUA_TNUMBER);
+	Number maxJumpHeight = lua_tonumber(L, 2);
+	inst->setMaxJumpHeight(maxJumpHeight);
+	return 0;
+}
+
+static int Physics3D_PhysicsCharacter_onGround(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	lua_pushboolean(L, inst->onGround());
+	return 1;
+}
+
+static int Physics3D_delete_PhysicsCharacter(lua_State *L) {
+	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
+	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
+	delete inst;
+	return 0;
+}
+
 static int Physics3D_PhysicsSceneEntity_get_enabled(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
 	PhysicsSceneEntity *inst = (PhysicsSceneEntity*)lua_topointer(L, 1);
@@ -693,93 +780,6 @@ static int Physics3D_PhysicsVehicle_Update(lua_State *L) {
 static int Physics3D_delete_PhysicsVehicle(lua_State *L) {
 	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
 	PhysicsVehicle *inst = (PhysicsVehicle*)lua_topointer(L, 1);
-	delete inst;
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	SceneEntity * entity = (SceneEntity *)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TNUMBER);
-	Number mass = lua_tonumber(L, 2);
-	luaL_checktype(L, 3, LUA_TNUMBER);
-	Number friction = lua_tonumber(L, 3);
-	luaL_checktype(L, 4, LUA_TNUMBER);
-	Number stepSize = lua_tonumber(L, 4);
-	PhysicsCharacter *inst = new PhysicsCharacter(entity, mass, friction, stepSize);
-	lua_pushlightuserdata(L, (void*)inst);
-	return 1;
-}
-
-static int Physics3D_PhysicsCharacter_Update(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	inst->Update();
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_setWalkDirection(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TLIGHTUSERDATA);
-	Vector3 direction = *(Vector3*)lua_topointer(L, 2);
-	inst->setWalkDirection(direction);
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_jump(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	inst->jump();
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_warpCharacter(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TLIGHTUSERDATA);
-	Vector3 position = *(Vector3*)lua_topointer(L, 2);
-	inst->warpCharacter(position);
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_setJumpSpeed(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TNUMBER);
-	Number jumpSpeed = lua_tonumber(L, 2);
-	inst->setJumpSpeed(jumpSpeed);
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_setFallSpeed(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TNUMBER);
-	Number fallSpeed = lua_tonumber(L, 2);
-	inst->setFallSpeed(fallSpeed);
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_setMaxJumpHeight(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	luaL_checktype(L, 2, LUA_TNUMBER);
-	Number maxJumpHeight = lua_tonumber(L, 2);
-	inst->setMaxJumpHeight(maxJumpHeight);
-	return 0;
-}
-
-static int Physics3D_PhysicsCharacter_onGround(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
-	lua_pushboolean(L, inst->onGround());
-	return 1;
-}
-
-static int Physics3D_delete_PhysicsCharacter(lua_State *L) {
-	luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
-	PhysicsCharacter *inst = (PhysicsCharacter*)lua_topointer(L, 1);
 	delete inst;
 	return 0;
 }

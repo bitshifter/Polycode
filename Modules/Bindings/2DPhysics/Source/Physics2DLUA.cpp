@@ -7,7 +7,9 @@ using namespace Polycode;
 int luaopen_Physics2D(lua_State *L) {
 CoreServices *inst = (CoreServices*)lua_topointer(L, 1);
 CoreServices::setInstance(inst);
-	static const struct luaL_reg physics2dLib [] = {		{"PhysicsScreen", Physics2D_PhysicsScreen},
+	static const struct luaL_reg physics2dLib [] = {		{"PhysicsJoint", Physics2D_PhysicsJoint},
+		{"delete_PhysicsJoint", Physics2D_delete_PhysicsJoint},
+		{"PhysicsScreen", Physics2D_PhysicsScreen},
 		{"PhysicsScreen_Update", Physics2D_PhysicsScreen_Update},
 		{"PhysicsScreen_addPhysicsChild", Physics2D_PhysicsScreen_addPhysicsChild},
 		{"PhysicsScreen_removePhysicsChild", Physics2D_PhysicsScreen_removePhysicsChild},
@@ -48,8 +50,6 @@ CoreServices::setInstance(inst);
 		{"PhysicsScreenEvent_getFirstEntity", Physics2D_PhysicsScreenEvent_getFirstEntity},
 		{"PhysicsScreenEvent_getSecondEntity", Physics2D_PhysicsScreenEvent_getSecondEntity},
 		{"delete_PhysicsScreenEvent", Physics2D_delete_PhysicsScreenEvent},
-		{"PhysicsJoint", Physics2D_PhysicsJoint},
-		{"delete_PhysicsJoint", Physics2D_delete_PhysicsJoint},
 		{"PhysicsScreenEntity_get_collisionOnly", Physics2D_PhysicsScreenEntity_get_collisionOnly},
 		{"PhysicsScreenEntity_set_collisionOnly", Physics2D_PhysicsScreenEntity_set_collisionOnly},
 		{"PhysicsScreenEntity", Physics2D_PhysicsScreenEntity},
