@@ -53,7 +53,8 @@ def createLUABindings(inputPath, prefix, mainInclude, libSmallName, libName, api
 		out += "	int wrapperIndex;\n"
 		out += "	lua_State *L;\n"
 		out += "};\n\n"
-	
+
+	filteredFiles.sort()
 	for fileName in filteredFiles:
 		inheritInModule = ["PhysicsSceneEntity", "CollisionScene", "CollisionSceneEntity"]
 		headerFile = "%s/%s" % (inputPath, fileName)
@@ -64,7 +65,7 @@ def createLUABindings(inputPath, prefix, mainInclude, libSmallName, libName, api
 			cppHeader = CppHeaderParser.CppHeader(contents, "string")
 			ignore_classes = ["PolycodeShaderModule", "Object", "Threaded", "OpenGLCubemap"]
 
-			for ckey in cppHeader.classes:
+			for ckey in sorted(cppHeader.classes):
 				print ">> Parsing class %s" % ckey
 				c = cppHeader.classes[ckey]
 	#			if ckey == "ParticleEmitter":
